@@ -1,2 +1,2 @@
 # BSModLearning
-Learning C++ to modify the game Beat Saber
+Learning C# to modify the game Beat Saber
