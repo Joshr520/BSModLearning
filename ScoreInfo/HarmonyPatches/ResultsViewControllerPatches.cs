@@ -36,12 +36,14 @@ namespace ScoreInfo.HarmonyPatches
                 //$resultScore = 
                 resultPercentage = ScorePercentage.calculatePercentage(maxScore, resultScore);
                 resultAvgPercentage = ScorePercentage.calculatePercentage(115 * ScorePercentage.numNotes, ScorePercentage.totalScore);
-                Logger.log.Debug(ScorePercentage.totalScore.ToString());
 
                 //disable wrapping and autosize. format string and overwite rankText
                 __instance._rankText.autoSizeTextContainer = false;
                 __instance._rankText.enableWordWrapping = false;
                 __instance._rankText.text = "<size=70%>" + resultPercentage.ToString() + "<size=50%>" + "%\n" + "<size=70%>" + ((resultAvgPercentage * 115) / 100).ToString() + "<size=50%>" + "/" + 115.ToString();
+                Logger.log.Debug("Total Score: " + ScorePercentage.totalScore.ToString());
+                Logger.log.Debug((115*ScorePercentage.numNotes).ToString());
+                Logger.log.Debug(ScorePercentage.numNotes.ToString());
             }
         }
     }

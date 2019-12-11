@@ -51,30 +51,33 @@ namespace ScoreInfo
         IEnumerator FindScoreController()
         {
             yield return new WaitUntil(() => Resources.FindObjectsOfTypeAll<ScoreController>().Any());
-            bool loaded = false;
-            while (!loaded)
-            {
-                scoreController = Resources.FindObjectsOfTypeAll<ScoreController>().First();
-                if (scoreController == null)
-                    yield return new WaitForSeconds(0.1f);
-                else
-                    loaded = true;
-            }
+            scoreController = Resources.FindObjectsOfTypeAll<ScoreController>().First();
             scoreController.noteWasCutEvent += OnNoteHit;
         }
 
         void OnNoteHit(NoteData data, NoteCutInfo info, int score)
         {
-            ScoreController.RawScoreWithoutMultiplier(info, out int beforeCutRawScore, out int afterCutRawScore, out int cutDistanceRawScore);
-            noteCutInfo = info;
-            info.swingRatingCounter.didFinishEvent += addScore;
+            bool done = false;
+            void addScore(SaberSwingRatingCounter counter)
+            {
+                ScoreController.RawScoreWithoutMultiplier(info, out int beforeCutRawScore, out int afterCutRawScore, out int cutDistanceRawScore);
+                numNotes++;
+                totalScore += beforeCutRawScore + afterCutRawScore + cutDistanceRawScore;
+                Logger.log.Debug("Swing Score: " + (beforeCutRawScore + afterCutRawScore + cutDistanceRawScore).ToString());
+                done = true;
+                info.swingRatingCounter.didFinishEvent -= addScore;
+            }
+            if (done)
+            {
+                return;
+            }
+            else
+            { 
+                noteCutInfo = info;
+                info.swingRatingCounter.didFinishEvent += addScore;
+            }
+
         }
 
-        void addScore(SaberSwingRatingCounter counter)
-        {
-            ScoreController.RawScoreWithoutMultiplier(noteCutInfo, out int beforeCutRawScore, out int afterCutRawScore, out int cutDistanceRawScore);
-            numNotes++;
-            totalScore += beforeCutRawScore + afterCutRawScore + cutDistanceRawScore;
-        }
     }
 }
